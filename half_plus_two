@@ -1,0 +1,17 @@
+# Download the TensorFlow Serving Docker image and repo
+docker pull tensorflow/serving
+
+git clone https://github.com/tensorflow/serving
+# Location of demo models
+
+Set-Variable -Name "TESTDATA" -Value "$(pwd)/serving/tensorflow_serving/servables/tensorflow/testdata"
+
+$TESTDATA
+
+docker run -t --rm -p 8501:8501 -v "$TESTDATA/saved_model_half_plus_two_cpu:/models/half_plus_two" -e MODEL_NAME=half_plus_two tensorflow/serving
+
+curl -d '{\"instances\": [1.0, 2.0, 5.0]}'-X POST http://localhost:8501/v1/models/half_plus_two:predict
+
+docker container ls
+
+docker stop
